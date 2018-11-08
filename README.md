@@ -22,50 +22,61 @@
 - [FAQ](FAQ.md)
 - [Adoptors](./docs/_index.md#who-has-adopted-dragonfly)
 - [LICENSE](LICENSE)
-- [Commercial Support](#commercial-support)
 
 ## Introduction
 
-Dragonfly is an intelligent P2P based image and file distribution system. It aims to resolve issues related to low-efficiency, low-success rate and waste of network bandwidth in file transferring process. Especially in large-scale file distribution scenarios such as application distribution, cache distribution, log distribution, image distribution, etc.
-In Alibaba, Dragonfly is invoked 2 Billion times and the data distributed is 3.4PB every month. Dragonfly has become one of the most important pieces of infrastructure at Alibaba. The reliability is up to 99.9999% (*1).
+Dragonfly is an intelligent P2P based image and file distribution system. It aims to resolve issues related to low-efficiency, low-success rate and waste of network bandwidth in file transferring process, especially distribution scenarios such as application distribution, cache distribution, log distribution, image distribution, etc.
 
-While container technologies makes devops life easier most of the time, it sure brings a some challenges: the efficiency of image distribution, especially when you have to replicate image distribution on several hosts. Dragonfly works extremely well with both Docker and [PouchContainer](https://github.com/alibaba/pouch) for this scenario. It also is compatible with any other container formats.
-
-It delivers up to 57 times the throughput of native docker and saves up to 99.5% the out bandwidth of registry(*2).
+While container technologies makes devops life easier most of the time, and it definitely brings some challenges: the efficiency of image distribution, especially when you have to replicate image distribution on several hosts. Dragonfly works extremely well with both Docker and [PouchContainer](https://github.com/alibaba/pouch) for this scenario. It is also compatible with some other container engines.
 
 Dragonfly makes it simple and cost-effective to set up, operate, and scale any kind of files/images/data distribution.
 
 ## Features
 
-*The project is an open source version of the dragonfly and more internal features will be gradually opened*.
+Dragonfly is sourced from Alibaba, trained in actual scenarios, and solves three aspects problems in cloud native image distribution proactively: efficiency, flow control and security:
+
+- **distribution efficiency**: with P2P and CDN technology, reduce image distribution time drastically, speed up business delivery;
+- **distribution flow control**: with intelligent analysis technology, dynamically balance distribtion workload and business running, realize load's dynamical control, guarantee business' stable running;
+- **distribution security**: support HTTPs protocol in private image registry, encrypt distribution content, ensure security on data.
+
+### Distribution Efficiency
 
 - **P2P based file distribution**: Using P2P technology for file transmission, which can make full use of the bandwidth resources of each peer to improve download efficiency,  saves a lot of cross-IDC bandwidth, especially costly cross-board bandwidth
-- **Non-invasive support all kinds of container technologies**: Dragonfly can seamlessly support various containers for distributing images.
-- **Host level speed limit**: Many downloading tools(wget/curl) only have rate limit for the current download task, but dragonfly also provides rate limit for the entire host.
 - **Passive CDN**: The CDN mechanism can avoid repetitive remote downloads.
-- **Strong consistency**: Dragonfly can guarantee that all downloaded files must be consistent even if users do not provide any check code(MD5).
-- **Disk protection and high efficient IO**: Precheck Disk space, delay synchronization, write file-block in the best order, split net-read / disk-write, and so on.
-- **High performance**: Cluster Manager is completely closed-loop, which means, it does not rely on any DB or distributed cache, processing requests with extremely high performance.
-- **Exception auto isolation**: Dragonfly will automatically isolate exception nodes(peer or Cluster Manager) to improve download stability.
 - **No pressure on file source**: Generally, as long as a few Cluster Managers download file from the source.
-- **Support standard http header**: Support http header, Submit authentication information through http header.
-- **Effective concurrency control of Registry Auth**: Reduce the pressure of the Registry Auth Service.
-- **Simple and easy to use**: Very few configurations are needed.
 
-## Comparison
+### Distribution Flow Control
+
+- **Host level speed limit**: Many downloading tools(wget/curl) only have rate limit for the current download task, but dragonfly also provides rate limit for the entire host.
+- **Disk protection and high efficient IO**: Precheck Disk space, delay synchronization, write file-block in the best order, split net-read / disk-write, and so on.
+
+### Distribution Security
+
+- **Strong consistency**: Dragonfly can guarantee that all downloaded files must be consistent even if users do not provide any check code(MD5).
+- **Exception auto isolation**: Dragonfly will automatically isolate exception nodes(peer or Cluster Manager) to improve download stability.
+- **Effective concurrency control of Registry Auth**: Reduce the pressure of the Registry Auth Service.
+
+
+## Performance Data
+
+Dragonfly performs quite significantly in distributing image in cloud native scenarios. 
+
+With using Dragonfly to distriute, no matter how many clients start the file downloading, the average downloading time is always around 12 seconds. 
+
+With only using wget to download files, the downloading time keeps increasing when you have more clients, and as the amount of wget clients reaches 1200, the file source will crash, then it can not serve any client.
+
+For more details about comparison of two different way to distriubte images, please refer to the following graph.
+
+![Performance](docs/images/performance.png)
+
+The following data is about the testing environment configurations.
 
 |Test Environment ||
 |--------------------|-------------------|
 |Dragonfly server|2 * (24core 64GB 2000Mb/s)|
 |File Source server|2 * (24core 64GB 2000Mb/s)|
 |Client|4core 8GB 200Mb/s|
-|Target file size|200MB|
-|Executed Date|2016-04-20|
-
-![Performance](docs/images/performance.png)
-
-For Dragonfly, no matter how many clients issue the file downloading, the average downloading time is always around 12 seconds.
-And for wget, the downloading time keeps increasing when you have more clients, and as the amount of wget clients reaches 1200, the file source will crash, then it can not serve any client.
+|Target Image size|200MB|
 
 ## Roadmap
 
