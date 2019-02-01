@@ -55,6 +55,10 @@ unit-test: build-dirs
 	./hack/unit-test.sh
 .PHONY: unit-test
 
+integration-test: build-dirs
+	./hack/integration-test.sh
+.PHONY: integration-test
+
 check:
 	@echo "Begin to check client code formats."
 	./hack/check-client.sh	
