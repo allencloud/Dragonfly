@@ -15,7 +15,7 @@ dfdaemon [flags]
 ```
       --callsystem string   caller name (default "com_ops_dragonfly")
       --certpem string      cert.pem file path
-      --dfpath string       dfget path (default "/Users/allensun/go/src/github.com/dragonflyoss/Dragonfly/cmd/dfdaemon/dfget")
+      --dfpath string       dfget path (default "/Users/allensun/go/src/github.com/dragonflyoss/Dragonfly/bin/darwin_amd64/dfget")
   -h, --help                help for dfdaemon
       --hostIp string       dfdaemon host ip, default: 127.0.0.1 (default "127.0.0.1")
       --keypem string       key.pem file path
