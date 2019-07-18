@@ -477,24 +477,27 @@ func (ps *peerServer) shutdown() {
 func (ps *peerServer) deleteExpiredFile(path string, info os.FileInfo,
 	expireTime time.Duration) bool {
 	taskName := helper.GetTaskName(info.Name())
-	if v, ok := ps.syncTaskMap.Load(taskName); ok {
-		task, ok := v.(*taskConfig)
-		if ok && !task.finished {
-			return false
-		}
-		if time.Now().Sub(info.ModTime()) > expireTime {
-			if ok {
-				ps.api.ServiceDown(task.superNode, task.taskID, task.cid)
-			}
-			os.Remove(path)
-			ps.syncTaskMap.Delete(taskName)
-			return true
-		}
-	} else {
+	v, ok := ps.syncTaskMap.Load(taskName)
+	if !ok {
 		os.Remove(path)
 		return true
 	}
-	return false
+
+	task, ok := v.(*taskConfig)
+	if ok && !task.finished {
+		return false
+	}
+
+	if time.Now().Sub(info.ModTime()) <= expireTime {
+		return false
+	}
+
+	if ok {
+		ps.api.ServiceDown(task.superNode, task.taskID, task.cid)
+	}
+	os.Remove(path)
+	ps.syncTaskMap.Delete(taskName)
+	return true
 }
 
 // ----------------------------------------------------------------------------

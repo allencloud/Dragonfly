@@ -134,17 +134,18 @@ func (pe *peerServerExecutor) checkPeerServerExist(cfg *config.Config, port int)
 		port = getPortFromMeta(cfg.RV.MetaPath)
 	}
 
+	logrus.Infof("local http result:%s err:%v, port:%d path:%s", result, err, port, config.LocalHTTPPathCheck)
 	// check the peer server whether is available
 	result, err := checkServer(cfg.RV.LocalIP, port, cfg.RV.DataDir, taskFileName, cfg.TotalLimit)
-	logrus.Infof("local http result:%s err:%v, port:%d path:%s",
-		result, err, port, config.LocalHTTPPathCheck)
-
-	if err == nil {
-		if result == taskFileName {
-			logrus.Infof("use peer server on port:%d", port)
-			return port
-		}
-		logrus.Warnf("not found process on port:%d, version:%s", port, version.DFGetVersion)
+	if err != nil {
+		logrus.Errorf("failed to check server on port(%d) version(%s): %v", port, version.DFGetVersion, err)
+		return 0
 	}
+
+	if result == taskFileName {
+		logrus.Infof("use peer server on port:%d", port)
+		return port
+	}
+	logrus.Warnf("not found process on port:%d, version:%s", port, version.DFGetVersion)
 	return 0
 }

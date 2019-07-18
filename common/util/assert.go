@@ -57,16 +57,15 @@ func IsEmptySlice(values []string) bool {
 }
 
 // IsNil returns whether the value  is nil.
-func IsNil(value interface{}) (result bool) {
+func IsNil(value interface{}) bool {
 	if value == nil {
-		result = true
-	} else {
-		switch v := reflect.ValueOf(value); v.Kind() {
-		case reflect.Chan, reflect.Func, reflect.Interface, reflect.Map, reflect.Ptr, reflect.Slice:
-			return v.IsNil()
-		}
+		return true
 	}
-	return
+	switch v := reflect.ValueOf(value); v.Kind() {
+	case reflect.Chan, reflect.Func, reflect.Interface, reflect.Map, reflect.Ptr, reflect.Slice:
+		return v.IsNil()
+	}
+	return false
 }
 
 // IsTrue returns whether the value is true.

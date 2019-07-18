@@ -37,9 +37,8 @@ func FinishTask(ip string, port int, taskFileName, cid, taskID, node string) err
 	return uploaderAPI.FinishTask(ip, port, req)
 }
 
-// checkServer check if the server is available。
+// checkServer checks if the server is available.
 func checkServer(ip string, port int, dataDir, taskFileName string, totalLimit int) (string, error) {
-
 	// prepare the request body
 	req := &api.CheckServerRequest{
 		TaskFileName: taskFileName,
